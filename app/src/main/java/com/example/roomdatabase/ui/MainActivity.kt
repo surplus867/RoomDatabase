@@ -6,22 +6,29 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
-import com.example.roomdatabase.R
 import com.example.roomdatabase.adapter.NoteAdapter
 import com.example.roomdatabase.databinding.ActivityMainBinding
 import com.example.roomdatabase.db.NoteDatabase
+import com.example.roomdatabase.db.NoteEntity
+import com.example.roomdatabase.repository.DbRepository
 import com.example.roomdatabase.utilis.Constants.NOTE_DATABASE
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
-    private val noteDB : NoteDatabase by lazy {
-        Room.databaseBuilder(this,NoteDatabase::class.java,NOTE_DATABASE)
-            .allowMainThreadQueries()
-            .fallbackToDestructiveMigration()
-            .build()
-    }
-    private val noteAdapter by lazy { NoteAdapter() }
+    private lateinit var binding: ActivityMainBinding
+
+    @Inject
+    lateinit var repository: DbRepository
+
+    @Inject
+    lateinit var noteAdapter: NoteAdapter
+
+    @Inject
+    lateinit var noteEntity: NoteEntity
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,10 +47,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkItem() {
         binding.apply {
-            if(noteDB.doa().getAllNotes().isNotEmpty()) {
+            if(repository.getAllNotes().isNotEmpty()) {
                 rvNoteList.visibility = View.VISIBLE
                 tvEmptyText.visibility = View.GONE
-                noteAdapter.differ.submitList(noteDB.doa().getAllNotes())
+                noteAdapter.differ.submitList(repository.getAllNotes())
                 setupRecyclerView()
 
             } else {

@@ -1,6 +1,5 @@
 package com.example.roomdatabase.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -11,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.roomdatabase.databinding.ItemNoteBinding
 import com.example.roomdatabase.db.NoteEntity
 import com.example.roomdatabase.ui.UpdateNoteActivity
-import com.example.roomdatabase.utilis.Constants.BUNDLE_NOTE_ID
+import javax.inject.Inject
 
-class NoteAdapter : RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
+class NoteAdapter @Inject constructor() : RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
     private lateinit var binding: ItemNoteBinding
     private lateinit var context: Context
 
@@ -29,13 +28,9 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
         holder.setIsRecyclable(false)
     }
 
-    override fun getItemCount(): Int {
-        return differ.currentList.size
-    }
+    override fun getItemCount(): Int = differ.currentList.size
 
     inner class ViewHolder : RecyclerView.ViewHolder(binding.root) {
-
-        @SuppressLint("SetTextI18n")
         fun bind(item: NoteEntity) {
             //InitView
             binding.apply {
@@ -45,7 +40,7 @@ class NoteAdapter : RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
 
                 root.setOnClickListener {
                     val intent = Intent(context, UpdateNoteActivity::class.java)
-                    intent.putExtra(BUNDLE_NOTE_ID, item.noteId)
+                    intent.putExtra("NOTE_ID", item.noteId)
                     context.startActivity(intent)
                 }
             }
